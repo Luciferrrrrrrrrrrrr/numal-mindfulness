@@ -9,7 +9,7 @@ export default function Index() {
         alignItems: "center",
       }}
     >
-      <Text>Numa-mindfulnes</Text>
+      <Text>Home Screen</Text>
     </View>
   );
 }
