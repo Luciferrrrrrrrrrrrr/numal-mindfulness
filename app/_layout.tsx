@@ -20,7 +20,7 @@ import {ElevenLabsProvider} from "@elevenlabs/react-native";
       <Stack.Protected
       guard ={isSignedIn}
       >
-      <Stack.Screen name ="(protected)"/>
+      <Stack.Screen name ="(protected)" options={{headerShown : false}}/>
       </Stack.Protected>
       
       <Stack.Protected
