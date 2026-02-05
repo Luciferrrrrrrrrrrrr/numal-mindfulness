@@ -10,11 +10,11 @@
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.anonymous.numal-mindfulness",
+      "bundleIdentifier": "com.biswajeet.numal",
       "bitcode": false
     },
     "android": {
-      "package": "com.anonymous.numal_mindfulness",
+      "package": "com.biswajeet.numal",
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
         "foregroundImage": "./assets/images/android-icon-foreground.png",

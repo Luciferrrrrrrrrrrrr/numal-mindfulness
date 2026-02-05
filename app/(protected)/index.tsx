@@ -1,51 +1,53 @@
 import { sessions } from "@/utils/sessions";
 import { useRouter } from "expo-router";
-import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import {
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 import ParallaxScrollView from "@/components/ParallaxScrollView";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { appwriteConfig, database, Session } from "@/utils/appwrite";
 import { Query } from "react-native-appwrite";
 import { useUser } from "@clerk/clerk-expo";
 import { Ionicons } from "@expo/vector-icons";
 import { colors } from "@/utils/colors";
+import SignOutButton from "@/components/clerk/SignOutButton";
+
+/* -------------------- Main Screen -------------------- */
 
 export default function Index() {
   const router = useRouter();
+  const { user } = useUser();
   const [sessionHistory, setSessionHistory] = useState<Session[]>([]);
-  const {user} = useUser();
 
   useEffect(() => {
     fetchSessions();
-  },[])
+  }, []);
 
   const fetchSessions = async () => {
-    if (!user) {
-      alert ("no user found");
-      return;
+    if (!user) return;
 
-    }
-    try { 
-
+    try {
       const response = await database.listDocuments<Session>({
-  databaseId: appwriteConfig.db,
-  collectionId: appwriteConfig.tables.session,
-  queries: [
-    Query.equal("user_id", user.id),
-  ],
-});
+        databaseId: appwriteConfig.db,
+        collectionId: appwriteConfig.tables.session,
+        queries: [Query.equal("user_id", user.id)],
+      });
 
       setSessionHistory(response.documents);
-      console.log(response);
     } catch (e) {
-      console.log(e);
+      console.log("Fetch sessions error:", e);
     }
-  }
+  };
 
   return (
     <ParallaxScrollView>
-      {/* Section title */}
+      
       <Text style={styles.sectionTitle}>Explore Sessions</Text>
 
       <ScrollView
@@ -64,42 +66,135 @@ export default function Index() {
               })
             }
           >
-            {/* Background image */}
             <Image
               source={session.image}
               style={styles.sessionImage}
               contentFit="cover"
               transition={800}
-              placeholder={{
-                blurhash: "LEHV6nWB2yk8pyo0adR*.7kCMdnj",
-              }}
             />
 
-            {/* Gradient overlay */}
             <LinearGradient
               colors={["rgba(0,0,0,0)", "rgba(0,0,0,0.7)"]}
               style={StyleSheet.absoluteFill}
             />
 
-            {/* Text overlay */}
             <View style={styles.textContainer}>
               <Text style={styles.sessionTitle}>{session.title}</Text>
             </View>
           </Pressable>
         ))}
       </ScrollView>
-            <Text style={styles.sectionTitle}> Recent Session </Text>
-            <Pressable onPress={fetchSessions}>
-              <Ionicons
-              name= "refresh-circle-sharp"
-              size={32}
-              color={colors.primary}
-              />
-            </Pressable>
+
+      
+      <View style={styles.recentHeader}>
+        <Text style={styles.sectionTitle}>Recent Sessions</Text>
+        <Pressable onPress={fetchSessions}>
+          <Ionicons
+            name="refresh-circle-sharp"
+            size={32}
+            color={colors.primary}
+          />
+        </Pressable>
+      </View>
+
+     
+      {sessionHistory.length > 0 ? (
+        sessionHistory.map((session) => (
+          <SessionCard key={session.$id} session={session} />
+        ))
+      ) : (
+        <View style={styles.emptyState}>
+          <Text style={styles.emptyText}>No sessions found</Text>
+        </View>
+      )}
+
+      {/* ---------- Account Section ---------- */}
+<Text style={styles.sectionTitle}>Account</Text>
+
+<View
+  style={{
+    borderRadius: 16,
+    padding: 16,
+    marginHorizontal: 16,
+    backgroundColor: "white",
+    gap: 8,
+    marginBottom: 100,
+  }}
+>
+  {/* Profile image */}
+  <Image
+    source={{ uri: user?.imageUrl }}
+    style={{
+      width: 50,
+      height: 50,
+      borderRadius: 100,
+    }}
+  />
+
+  {/* Name */}
+  <Text style={{ fontSize: 20, fontWeight: "bold" }}>
+    {user?.firstName} {user?.lastName}
+  </Text>
+
+  {/* Email */}
+  <Text style={{ fontSize: 16 }}>
+    {user?.emailAddresses[0]?.emailAddress}
+  </Text>
+
+  {/* Sign out */}
+  <SignOutButton />
+</View>
+
 
     </ParallaxScrollView>
   );
 }
+
+
+
+const SessionCard = ({ session }: { session: Session }) => {
+  const [isExpanded, setIsExpanded] = useState(false);
+
+  const randomEmoji = useMemo(() => {
+    const emojis = ["🌿", "🌊", "🌤️", "🌙", "✨", "🍃", "🧘"];
+    return emojis[Math.floor(Math.random() * emojis.length)];
+  }, []);
+
+  return (
+    <View style={styles.sessionHistoryCard}>
+      <Text style={{ fontSize: 24 }}>{randomEmoji}</Text>
+
+      <Text style={styles.historyTitle}>
+        {session.call_summary_title}
+      </Text>
+
+      {isExpanded ? (
+        <>
+          <Text style={styles.transcript}>{session.transcript}</Text>
+          <Pressable onPress={() => setIsExpanded(false)}>
+            <Text style={styles.readMore}>Read less</Text>
+          </Pressable>
+        </>
+      ) : (
+        <Pressable onPress={() => setIsExpanded(true)}>
+          <Text style={styles.readMore}>Read more</Text>
+        </Pressable>
+      )}
+
+      <Text style={styles.meta}>
+        {session.call_duration_secs} seconds, {session.token} tokens
+      </Text>
+
+      <Text style={styles.meta}>
+        {new Date(session.$createdAt).toLocaleDateString("en-US", {
+          weekday: "long",
+        })}
+      </Text>
+    </View>
+  );
+};
+
+/* -------------------- Styles -------------------- */
 
 const styles = StyleSheet.create({
   sectionTitle: {
@@ -111,7 +206,6 @@ const styles = StyleSheet.create({
 
   scrollContainer: {
     paddingLeft: 16,
-    paddingRight: 8,
     gap: 16,
   },
 
@@ -125,7 +219,6 @@ const styles = StyleSheet.create({
   sessionImage: {
     width: "100%",
     height: "100%",
-    overflow:"hidden",
   },
 
   textContainer: {
@@ -139,7 +232,51 @@ const styles = StyleSheet.create({
     color: "white",
     fontSize: 18,
     fontWeight: "bold",
-    textAlign :"center",
-    
+    textAlign: "center",
+  },
+
+  recentHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingRight: 16,
+  },
+
+  sessionHistoryCard: {
+    borderRadius: 16,
+    padding: 16,
+    marginHorizontal: 16,
+    marginBottom: 16,
+    backgroundColor: "white",
+    gap: 8,
+  },
+
+  historyTitle: {
+    fontSize: 20,
+    fontWeight: "bold",
+  },
+
+  transcript: {
+    fontSize: 16,
+  },
+
+  readMore: {
+    fontSize: 16,
+    color: colors.primary,
+  },
+
+  meta: {
+    fontSize: 14,
+    opacity: 0.6,
+  },
+
+  emptyState: {
+    alignItems: "center",
+    paddingVertical: 32,
+  },
+
+  emptyText: {
+    fontSize: 16,
+    opacity: 0.6,
   },
 });

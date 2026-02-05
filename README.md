@@ -1,50 +1,68 @@
-# Welcome to your Expo app 👋
+# Numal – AI-Guided Mindfulness App 🧘‍♂️✨
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Numal is a mobile mindfulness application that combines **AI-guided voice conversations**, **immersive visual sessions**, and **session summaries** to help users build a consistent mindfulness practice.
 
-## Get started
+The app is built using **Expo + React Native**, integrates **real-time AI voice conversations**, and persists user session history using **Appwrite**.
 
-1. Install dependencies
+---
 
-   ```bash
-   npm install
-   ```
+## 🚀 Features
 
-2. Start the app
+- 🎧 **AI-guided voice meditation**
+  - Real-time conversational sessions powered by ElevenLabs
+  - Adaptive responses based on session context
 
-   ```bash
-   npx expo start
-   ```
+- 🌄 **Immersive session experiences**
+  - Visual meditation themes (Forest View, Sunrise Sky, Mountain Path, etc.)
+  - Parallax scrolling and gradient overlays for a calm UX
 
-In the output, you'll find options to open the app in a
+- 🧠 **Session summaries**
+  - Automatically generated call summaries and transcripts
+  - Duration, token usage, and metadata tracking
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+- 👤 **User authentication**
+  - Secure authentication using Clerk
+  - Session history scoped per user
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+- 📊 **Session history**
+  - Persisted using Appwrite
+  - View recent sessions and summaries directly in the app
 
-## Get a fresh project
+---
 
-When you're ready, run:
+## 🛠 Tech Stack
 
+**Frontend**
+- Expo (Development Build)
+- React Native
+- TypeScript
+- Expo Router
+- Reanimated (for parallax & animations)
+
+**Backend / Services**
+- ElevenLabs (AI voice conversations)
+- Appwrite (Database & session persistence)
+- Clerk (Authentication)
+
+**Native / Platform**
+- iOS (Prebuilt Expo project)
+- Hermes engine
+- LiveKit WebRTC (audio streaming)
+
+---
+
+## 📱 Screens & UX Highlights
+
+- Parallax header with animated scaling
+- Gradient-based visual feedback during active conversations
+- Graceful handling of connection failures and session termination
+- Optimized for iOS devices
+
+---
+
+## ⚙️ Setup & Installation
+
+### 1. Clone the repository
 ```bash
-npm run reset-project
-```
-
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
-
-## Learn more
-
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+git clone https://github.com/<your-username>/numal-mindfulness.git
+cd numal-mindfulness
