@@ -1,18 +1,19 @@
 import { sessions } from "@/utils/sessions";
 import { useUser } from "@clerk/clerk-expo";
 import { useConversation } from "@elevenlabs/react-native";
-import { useLocalSearchParams } from "expo-router";
-import {   Text, View } from "react-native";
+import * as Brightness from "expo-brightness";
+import { useLocalSearchParams, useRouter } from "expo-router";
+import { useState } from "react";
+import { Text, View } from "react-native";
 import { Gradient } from "../gradient";
 import Button from "./Buttons";
-import { useState } from "react";
-import * as Brightness from "expo-brightness";
+
 
 
 export default function SessionScreen() {
     const {user} = useUser();
     const {sessionId} = useLocalSearchParams();
-    
+    const router = useRouter();
 
     const session = 
     sessions.find((s) => s.id === Number(sessionId)) ?? sessions[0];
@@ -72,6 +73,10 @@ export default function SessionScreen() {
     const endConversation = async() => {
         try {
             await conversation.endSession();
+            router.push({
+                pathname: "/summary",
+                params: {consversationId},
+            });
         }
             catch(e) {
                 console.log(e);
